@@ -839,94 +839,94 @@ with tab4:
         st.success(f"✅ Drone is within maintenance interval.")
 
     # Predictive Maintenance Section
-    st.markdown("---")
-    st.markdown("### 🔮 Predictive Maintenance")
+    # st.markdown("---")
+    # st.markdown("### 🔮 Predictive Maintenance")
 
-    # Calculate flight activity trends
-    if len(df_since_maintenance) >= 2:
-        # Calculate average hours per day based on recent activity
-        days_with_flights = df_since_maintenance.groupby("__date__")["__hours__"].sum()
+    # # Calculate flight activity trends
+    # if len(df_since_maintenance) >= 2:
+    #     # Calculate average hours per day based on recent activity
+    #     days_with_flights = df_since_maintenance.groupby("__date__")["__hours__"].sum()
 
-        # Get last 30 days of activity (or all available if less than 30)
-        recent_days = min(30, len(days_with_flights))
-        recent_activity = days_with_flights.tail(recent_days)
+    #     # Get last 30 days of activity (or all available if less than 30)
+    #     recent_days = min(30, len(days_with_flights))
+    #     recent_activity = days_with_flights.tail(recent_days)
 
-        avg_hours_per_day = recent_activity.mean()
+    #     avg_hours_per_day = recent_activity.mean()
 
-        # Calculate when maintenance will be due
-        hours_remaining = max(0, MAINTENANCE_HOURS_LIMIT - total_hours_since)
+    #     # Calculate when maintenance will be due
+    #     hours_remaining = max(0, MAINTENANCE_HOURS_LIMIT - total_hours_since)
 
-        if avg_hours_per_day > 0:
-            days_until_maintenance = hours_remaining / avg_hours_per_day
-            predicted_maintenance_date = max_date + timedelta(days=int(days_until_maintenance))
+    #     if avg_hours_per_day > 0:
+    #         days_until_maintenance = hours_remaining / avg_hours_per_day
+    #         predicted_maintenance_date = max_date + timedelta(days=int(days_until_maintenance))
 
-            pred_col1, pred_col2, pred_col3 = st.columns(3)
+    #         pred_col1, pred_col2, pred_col3 = st.columns(3)
 
-            with pred_col1:
-                st.metric(
-                    "Avg Flight Hours/Day",
-                    f"{avg_hours_per_day:.2f}",
-                    help=f"Based on last {recent_days} days with flights"
-                )
+    #         with pred_col1:
+    #             st.metric(
+    #                 "Avg Flight Hours/Day",
+    #                 f"{avg_hours_per_day:.2f}",
+    #                 help=f"Based on last {recent_days} days with flights"
+    #             )
 
-            with pred_col2:
-                if days_until_maintenance > 0:
-                    st.metric(
-                        "Est. Days Until Maintenance",
-                        f"{int(days_until_maintenance)}",
-                        help="Estimated based on recent flight activity"
-                    )
-                else:
-                    st.metric(
-                        "Est. Days Until Maintenance",
-                        "Overdue",
-                        delta=f"{int(abs(days_until_maintenance))} days over"
-                    )
+    #         with pred_col2:
+    #             if days_until_maintenance > 0:
+    #                 st.metric(
+    #                     "Est. Days Until Maintenance",
+    #                     f"{int(days_until_maintenance)}",
+    #                     help="Estimated based on recent flight activity"
+    #                 )
+    #             else:
+    #                 st.metric(
+    #                     "Est. Days Until Maintenance",
+    #                     "Overdue",
+    #                     delta=f"{int(abs(days_until_maintenance))} days over"
+    #                 )
 
-            with pred_col3:
-                if days_until_maintenance > 0:
-                    st.metric(
-                        "Predicted Maintenance Date",
-                        predicted_maintenance_date.strftime("%Y-%m-%d"),
-                        help="Estimated date when 200 hours will be reached"
-                    )
-                else:
-                    st.metric(
-                        "Predicted Maintenance Date",
-                        "Immediate",
-                        delta="Maintenance overdue"
-                    )
+    #         with pred_col3:
+    #             if days_until_maintenance > 0:
+    #                 st.metric(
+    #                     "Predicted Maintenance Date",
+    #                     predicted_maintenance_date.strftime("%Y-%m-%d"),
+    #                     help="Estimated date when 200 hours will be reached"
+    #                 )
+    #             else:
+    #                 st.metric(
+    #                     "Predicted Maintenance Date",
+    #                     "Immediate",
+    #                     delta="Maintenance overdue"
+    #                 )
 
-            # Visual indicator
-            if days_until_maintenance > 0:
-                if days_until_maintenance <= 7:
-                    st.warning(
-                        f"⏰ **Maintenance due within a week!** Schedule maintenance by {predicted_maintenance_date.strftime('%B %d, %Y')}.")
-                elif days_until_maintenance <= 14:
-                    st.info(
-                        f"📅 Maintenance recommended by {predicted_maintenance_date.strftime('%B %d, %Y')} (approximately {int(days_until_maintenance)} days).")
-                else:
-                    st.success(
-                        f"✅ Next maintenance estimated around {predicted_maintenance_date.strftime('%B %d, %Y')} (approximately {int(days_until_maintenance)} days away).")
+    #         # Visual indicator
+    #         if days_until_maintenance > 0:
+    #             if days_until_maintenance <= 7:
+    #                 st.warning(
+    #                     f"⏰ **Maintenance due within a week!** Schedule maintenance by {predicted_maintenance_date.strftime('%B %d, %Y')}.")
+    #             elif days_until_maintenance <= 14:
+    #                 st.info(
+    #                     f"📅 Maintenance recommended by {predicted_maintenance_date.strftime('%B %d, %Y')} (approximately {int(days_until_maintenance)} days).")
+    #             else:
+    #                 st.success(
+    #                     f"✅ Next maintenance estimated around {predicted_maintenance_date.strftime('%B %d, %Y')} (approximately {int(days_until_maintenance)} days away).")
 
-            # Show prediction details
-            with st.expander("ℹ️ How is this calculated?"):
-                st.markdown(f"""
-                **Prediction Method:**
-                - Analyzing flight activity from the last **{recent_days} days** with recorded flights
-                - Average flight hours per day: **{avg_hours_per_day:.2f} hours**
-                - Hours remaining until maintenance: **{hours_remaining:.2f} hours**
-                - Estimated days until limit: **{hours_remaining:.2f} ÷ {avg_hours_per_day:.2f} = {days_until_maintenance:.1f} days**
+    #         # Show prediction details
+    #         with st.expander("ℹ️ How is this calculated?"):
+    #             st.markdown(f"""
+    #             **Prediction Method:**
+    #             - Analyzing flight activity from the last **{recent_days} days** with recorded flights
+    #             - Average flight hours per day: **{avg_hours_per_day:.2f} hours**
+    #             - Hours remaining until maintenance: **{hours_remaining:.2f} hours**
+    #             - Estimated days until limit: **{hours_remaining:.2f} ÷ {avg_hours_per_day:.2f} = {days_until_maintenance:.1f} days**
 
-                **Note:** This is an estimate based on recent flight patterns. Actual maintenance timing may vary based on:
-                - Changes in flight frequency
-                - Seasonal variations in operations
-                - Unexpected maintenance needs
-                """)
-        else:
-            st.info("No recent flight activity detected. Unable to predict maintenance schedule.")
-    else:
-        st.info("Insufficient flight data for predictions. Need at least 2 flights since last maintenance.")
+    #             **Note:** This is an estimate based on recent flight patterns. Actual maintenance timing may vary based on:
+    #             - Changes in flight frequency
+    #             - Seasonal variations in operations
+    #             - Unexpected maintenance needs
+    #             """)
+    #     else:
+    #         st.info("No recent flight activity detected. Unable to predict maintenance schedule.")
+    # else:
+    #     st.info("Insufficient flight data for predictions. Need at least 2 flights since last maintenance.")
 
     # Graph: Cumulative hours since maintenance
     st.markdown("### Cumulative Flight Hours Since Maintenance")
@@ -986,3 +986,4 @@ with tab4:
 
 st.caption(
     "Tip: Select your Date/Datetime and Duration columns in the sidebar. HH:MM(:SS) durations are auto-converted to minutes.")
+
